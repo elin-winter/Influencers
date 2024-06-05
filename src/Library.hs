@@ -7,7 +7,7 @@ data Persona = UnaPersona {
     gustos :: [Gusto],
     miedos :: [Miedo],
     estabilidad :: Estabilidad
-    }
+    } deriving (Show)
 
 -- ------------------------- Definición de Tipos --------------------------
 type Gusto = String
@@ -123,6 +123,7 @@ esMiedosa = (>1000) . sum . map snd . miedos
 -- ---------------- Parte 2
 aplicarAcciones :: Persona -> [Accion] -> Persona
 aplicarAcciones = foldr ($) 
+
 -- Funcion 1
 elin :: Influencer
 elin = flip aplicarAcciones accionesElin
@@ -138,14 +139,11 @@ accionesElin = [
 miedoCorrupcion :: Influencer
 miedoCorrupcion = flip aplicarAcciones accionesCorrupcion
 
-agregarGusto :: Gusto -> [Gusto] -> [Gusto]
-agregarGusto gusto gustos = gusto : gustos
-
 accionesCorrupcion :: [Accion]
 accionesCorrupcion = [    
     hacerMiedosa ("Corrupcion", 100), 
     perderMiedo "Convertirse en Venezuela",
-    gustosSegunF (agregarGusto "Escuchar")
+    gustosSegunF ("Escuchar" :)
     ]
 
 -- Funcion 3
