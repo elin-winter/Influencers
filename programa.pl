@@ -74,35 +74,36 @@ contenidoAdictivo(foto(Participantes)):-
     length(Participantes, CantParticipantes),
     CantParticipantes < 4.
 
-%%%%%%%%%%%%%%%%% Punto 5 (ta mal :( )
-colaboran(Usuario1, Usuario2):-
-    post(Usuario1, _, Posteo),
-    postColaborativo(Posteo, Usuario2),
-    Usuario1 \= Usuario2.
+%%%%%%%%%%%%%%%%% Punto 5 
+colaboran(U1, U2):- 
+    colaboracion(U1,U2), 
+    U1 \= U2.
+    
+colaboran(U1,U2):- 
+    colaboracion(U2,U1),
+    U1 \= U2.
 
-colaboran(Usuario1, Usuario2):-
-    Usuario1 \= Usuario2,
-    post(Usuario2, _, Posteo),
-    postColaborativo(Posteo, Usuario1).
+colaboracion(U1,U2):-
+    post(U1, _, Posteo), 
+    postColaborativo(U1, Posteo, U2). 
 
-postColaborativo(video(_, Participantes), Usuario):-
-    member(Usuario, Participantes).
+postColaborativo(U1, Posteo, U2):-
+    quienAparece(U1, Posteo, Participantes),
+    member(U2, Participantes).
 
-postColaborativo(foto(Participantes), Usuario):-
-    member(Usuario, Participantes).
+quienAparece(_, video(_, Participantes), Participantes).
+quienAparece(_, foto(Participantes), Participantes).
+quienAparece(Autor, stream(_), [Autor]). 
 
 %%%%%%%%%%%%%%%%% Punto 6
 
 caminoALaFama(Usuario):-
     not(influencer(Usuario)),
-    influencer(Influencer),
-    postSuperColaborativo(Usuario, Influencer).
+    tieneFama(Famoso),
+    colaboracion(Famoso, Usuario),
+    Famoso \= Usuario.
 
-postSuperColaborativo(Usuario, Influencer) :-
-    post(Influencer, _, Posteo),
-    postColaborativo(Posteo, Usuario).
-
-postSuperColaborativo(Usuario, Influencer) :-
-    post(Influencer, _, Posteo),
-    postColaborativo(Intermediario, Posteo),
-    postSuperColaborativo(Usuario, Intermediario).
+tieneFama(Usuario):-
+    influencer(Usuario).
+tieneFama(Usuario):-
+    caminoALaFama(Usuario).
