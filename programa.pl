@@ -76,9 +76,9 @@ contenidoAdictivo(foto(Participantes)):-
 
 %%%%%%%%%%%%%%%%% Punto 5 (ta mal :( )
 colaboran(Usuario1, Usuario2):-
-    Usuario1 \= Usuario2,
     post(Usuario1, _, Posteo),
-    postColaborativo(Posteo, Usuario2).
+    postColaborativo(Posteo, Usuario2),
+    Usuario1 \= Usuario2.
 
 colaboran(Usuario1, Usuario2):-
     Usuario1 \= Usuario2,
