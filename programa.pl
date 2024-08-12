@@ -1,1 +1,108 @@
-% Aquí va el código.
+%%%%%%%%%%%%%%%%%%%%%%%%%% Influencers %%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% Punto 1
+
+usuario(ana, youtube, 3000000).
+usuario(ana, instagram, 2700000).
+usuario(ana, tiktok, 1000000).
+usuario(ana, twitch, 2).
+
+usuario(beto, twitch, 120000).
+usuario(beto, youtube, 6000000).
+usuario(beto, instagram, 1100000).
+
+usuario(cami, tiktok, 2000).
+usuario(dani, youtube, 1000000).
+usuario(evelyn, instagram, 1).
+
+%%%%%%%%%%%%%%%%% Punto 2
+
+% Parte A
+
+influencer(Usuario):-
+    usuario(Usuario, _,_),
+    findall(Seguidores, usuario(Usuario, _, Seguidores), CantSeguidores),
+    sum_list(CantSeguidores, SeguidoresTotal),
+    SeguidoresTotal > 10000.
+
+% Parte B
+
+omnipresente(Influencer):-
+    influencer(Influencer),
+    forall(usuario(_, Red, _), usuario(Influencer, Red, _)).
+
+% Parte C
+
+exclusivo(Influencer):-
+    influencer(Influencer),
+    usuario(Influencer, Red, _),
+    not((usuario(Influencer, Red2, _), Red2 \= Red)).
+
+%%%%%%%%%%%%%%%%% Punto 3
+
+% Parte A
+
+post(ana, tiktok, video(1, [evelyn, beto])).
+post(ana, tiktok, video(1, [ana])).
+post(ana, instagram, foto([ana])).
+
+post(beto, instagram, foto([])).
+post(cami, twitch, stream(leagueOfLegends)).
+post(cami, youtube, video(5, [cami])).
+
+post(evelyn, instagram, foto([evelyn, cami])).
+
+% Parte B
+
+tematica(juego, leagueOfLegends).
+tematica(juego, minecraft).
+tematica(juego, aoe).
+
+%%%%%%%%%%%%%%%%% Punto 4
+
+adictiva(Red):-
+    post(_, Red, _),
+    forall(post(_, Red, Posteo), contenidoAdictivo(Posteo)).
+
+contenidoAdictivo(video(Minutos, _)):-
+    Minutos < 3.
+
+contenidoAdictivo(stream(Tematica)):-
+    tematica(juego, Tematica).
+
+contenidoAdictivo(foto(Participantes)):-
+    length(Participantes, CantParticipantes),
+    CantParticipantes < 4.
+
+%%%%%%%%%%%%%%%%% Punto 5 (ta mal :( )
+colaboran(Usuario1, Usuario2):-
+    Usuario1 \= Usuario2,
+    post(Usuario1, _, Posteo),
+    postColaborativo(Posteo, Usuario2).
+
+colaboran(Usuario1, Usuario2):-
+    Usuario1 \= Usuario2,
+    post(Usuario2, _, Posteo),
+    postColaborativo(Posteo, Usuario1).
+
+postColaborativo(video(_, Participantes), Usuario):-
+    member(Usuario, Participantes).
+
+postColaborativo(foto(Participantes), Usuario):-
+    member(Usuario, Participantes).
+
+%%%%%%%%%%%%%%%%% Punto 6
+
+caminoALaFama(Usuario):-
+    not(influencer(Usuario)),
+    influencer(Influencer),
+    postSuperColaborativo(Usuario, Influencer).
+
+postSuperColaborativo(Usuario, Influencer) :-
+    post(Influencer, _, Posteo),
+    postColaborativo(Posteo, Usuario).
+
+postSuperColaborativo(Usuario, Influencer) :-
+    post(Influencer, _, Posteo),
+    postColaborativo(Intermediario, Posteo),
+    postSuperColaborativo(Usuario, Intermediario).
